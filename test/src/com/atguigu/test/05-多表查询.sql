@@ -68,6 +68,48 @@ AND d.`location_id` = l.`location_id`;
 
 
 
+-- ------------------------------------------------------------------------------------------------------
+/*05
+    查询的分类
+    - 等值连接	VS	非等值连接(从概率上来说, 和等值连接一样常用)
+    - 自连接	VS	非自连接
+    - 内连接	VS	外连接
+*/
+/*
+    第一类
+	等值连接和不等值连接
+	等值连接上面讲的都是的, 下面看看不等值连接
+	
+    解释下面这个sql语句 -> 查询员工工号, 姓, 薪资, 工资等级. 按照这个员工的工资的具体值, 到表job_grades中去匹配合适条件. 
+	将得到的结果给grade_level, 然后输出. 
+*/
+SELECT e.employee_id,e.last_name,salary,j.grade_level
+FROM employees e,job_grades j
+WHERE e.`salary` >= j.lowest_sal 
+AND e.`salary`<= j.`highest_sal`;
+
+# 等同于下面的sql
+SELECT e.employee_id,e.last_name,salary,j.grade_level
+FROM employees e,job_grades j
+WHERE e.`salary` BETWEEN j.`lowest_sal` AND j.`highest_sal`;
+
+
+
+/*06
+    自连接
+	在上面的where e.`department_id` = d.`department_id`语句中, 等号两边的表是不一样的, 这个是非自连接
+	反之, 如果两边都是通过一个表, 那么就是自连接
+	
+	练习 -> 查询员工的employee_id,last_name及其管理者的employee_id,last_name
+*/
+SELECT emp.employee_id,emp.last_name,mgr.employee_id mgr_id,mgr.last_name mgr_name
+FROM employees emp,employees mgr
+WHERE emp.`manager_id` = mgr.`employee_id`;	# 这里不能写反了 -> emp.`employee_id` = mgr.`manager_id`
+
+
+
+
+
 
 
 
