@@ -39,6 +39,7 @@ WHERE salary BETWEEN 6000 AND 8000;		# between...and...的查询结果包括边�
 /*03
     in(set) -> 查询满足set集合的员工信息
     where department_id in(30,40,50) -> 部门号为30或40或50的员工信息
+    IN(A,B,C) -> 是指where后面的字段的具体指等于A或B或C, 那么就是符合条件.
 */
 SELECT employee_id,last_name,department_id,salary
 FROM employees
@@ -49,6 +50,9 @@ WHERE department_id IN(30,40,50);
 
 /*04
     模糊查询like
+        _ -> 一个下划线_表示的是, 在这个位置上有一个字符(具体是什么不知道, 哪个都行)
+        % -> 表示有0个, 1个, 或者多个字符
+        \ -> 反斜线是默认的转义字符
     精准查询
 	查询名称为king的员工信息. 字符串和日期需要用''. 不要用""
 */
@@ -62,7 +66,7 @@ WHERE last_name = 'King';	# 使用单引号''
 # % : %表示的是0个, 1个, 或者多个字符
 SELECT employee_id,last_name
 FROM employees
-WHERE last_name LIKE '%a%';	# 名字中只要包含a就可以
+WHERE last_name LIKE '%a%';	# 名字中只要包含a就可以, 前面或者后面有多个字符都可以
 
 
 # 查询员工姓名中包含字符'a'且包含字符'e'的员工(2种写法)
@@ -89,7 +93,7 @@ WHERE last_name LIKE '_\_a%';
 # 默认\是转义字符, 但是能够自定义. 比如让#当作转义字符
 SELECT employee_id,last_name
 FROM employees
-WHERE last_name LIKE '_#_a%' ESCAPE '#';	# 这时候, #是转义字符
+WHERE last_name LIKE '_#_a%' ESCAPE '#';	# 这时候, #是转义字符(用ESCAPE指定转义字符)
 
 
 
