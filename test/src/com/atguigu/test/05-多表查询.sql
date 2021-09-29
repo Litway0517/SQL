@@ -68,6 +68,8 @@ AND d.`location_id` = l.`location_id`;
 
 
 
+
+
 -- ------------------------------------------------------------------------------------------------------
 /*05
     查询的分类
@@ -105,6 +107,137 @@ WHERE e.`salary` BETWEEN j.`lowest_sal` AND j.`highest_sal`;
 SELECT emp.employee_id,emp.last_name,mgr.employee_id mgr_id,mgr.last_name mgr_name
 FROM employees emp,employees mgr
 WHERE emp.`manager_id` = mgr.`employee_id`;	# 这里不能写反了 -> emp.`employee_id` = mgr.`manager_id`
+
+
+
+
+
+-- ------------------------------------------------------------------------------------------------------
+/*07
+    内连接与外连接定义 -> 
+	内连接
+		- 合并具有同一列的两个以上的表的行, 结果集中不包含一个表与另一个表不匹配的行
+	
+	外连接
+	    左外连接	
+		- 两个表在连接过程中除了返回满足连接条件的行以外还返回 左表 中不满足条件的行, 这种连接称为 左外连接。
+		  没有匹配的行时, 结果表中相应的列为空(NULL)
+		  左外连接 就是, 查询左表中无匹配关系的数据, 就是说, 即使左表中某行数据在右表中没有匹配, 这行数据你也得显示出来. 
+	    左外连接	
+		- 两个表在连接过程中除了返回满足连接条件的行以外还返回 右表 中不满足条件的行, 这种连接称为 右外连接。
+		  没有匹配的行时, 结果表中相应的列为空(NULL)
+		  右外连接 就是, 查询右表中无匹配关系的数据, 就是说, 即使右表中某行数据在左表中没有匹配, 这行数据你也得显示出来. 
+
+*/
+/*
+    内连接的例子 -> 查询员工的工号, last_name, 部门号
+    sql的结果只有106行. 实际上有一个哥们没有部门, 可能是新来的, 还没安排好. 
+	因为其他的员工, 从employees表中拿到他们的部门号之后再去departments表中挨个比对, 发现关系是成立的(=关系), 因此就输出结果.
+	然后, null是不匹配的, 和上面的定义一致. 所以只有106行结果. 这是内连接
+*/
+SELECT e.employee_id,e.last_name,d.department_id
+FROM employees e,departments d
+WHERE e.`department_id` = d.`department_id`;
+
+
+
+
+
+
+
+-- ------------------------------------------------------------------------------------------------------
+/*08
+    sql-99语法
+	orcale的实现方式比较简单, 直接在 需要展现数据的一侧添加  (+)  即可. 
+	但是这里需要使用sql-99的语法结构实现
+	先学一下sql-99语法, 然后再使用sql-99实现外连接. 
+*/
+# 例子1 -> sql-99语法实现内连接 -> 这和上面的select...from...where是一样的, 还没开始外连接. 
+SELECT e.employee_id,e.last_name,d.department_name
+FROM employees e INNER JOIN departments d 	# INNER关键词能够省略, 一般我们是省略的, 但是为了和下面形成对比, 而写了出来
+ON e.`department_id` = d.`department_id`;	# 这里的ON就相当于WHERE的作用了. 
+
+
+
+# 例子2 -> sql-99语法扩展, 实现刚才的那个查询城市的sql
+SELECT employee_id,last_name,department_name,city
+FROM employees e JOIN departments d 		# 为了查询department_name而JOIN(添加了)departments表, 每次JOIN一个表都要有ON
+ON e.`department_id` = d.`department_id`
+JOIN locations l 				# 同样的, 为了查询员工的city信息, 需要再次JOIN locations表, 一旦出现了JOIN就得有匹配的ON
+ON d.`location_id` = l.`location_id`;
+
+
+
+
+
+/*09
+    左外连接 -> 
+	需求: 查询所有员工的employee_id,last_name,department_name信息
+	注意: 一旦提到了 '所有' 类型的查询, 就需要注意, 有些字段之间可能不匹配, 但是还是需求查询所有, 一般是外连接. 
+	      而且外连接的情况比较常见. 
+    
+    使用sql-99语法实现左外连接
+    
+    左外连接是为了 把不满足匹配条件的数据也给查出来的手段. 
+*/
+SELECT e.employee_id,e.last_name,d.department_name
+FROM employees e LEFT OUTER JOIN departments d 		# 实际上OUTER能够省略, 因为一旦有了LEFT或者RIGHT那么就是外连接了
+ON e.`department_id` = d.`department_id`;
+
+
+
+
+/*010
+    右外连接 -> 
+        这个sql很有意思.
+        我们把上面的 左外连接 的sql, 直接改成, 右外连接. 
+        
+        这时候的需求就变成了 -> 在departments表(部门表)中获取部门的id号, 再去employees表(员工表)中挨个比对, 看一下有哪些员工在这个部门中
+        但是, 因为是右连接, 所以, 就是是有的部门中一个员工都没有, 那么也得把这个部门名称显示出来. 
+		为什么显示的是部门名称? 因为上面的select查询的就是department_name字段. 
+	
+	最后有122行, 这就说明有一些部门虽然设立了, 但是这部分部门没有一个员工. 122 - 107 + 1 = 16. 因此有16个部门是空部门. 
+*/
+SELECT e.employee_id,e.last_name,d.department_name
+FROM employees e RIGHT JOIN departments d
+ON e.`department_id` = d.`department_id`;
+
+
+# 与上一个需求一样 -> 左外和右外能够转换, 但是在开发中我们提倡使用左外. 
+# 就是说, 当那个表的数据比较多, 你又想让这个表显示出来, 那么就让这张表在JOIN的左面, FROM的右面. 
+SELECT e.employee_id,e.last_name,d.department_name
+FROM departments d LEFT JOIN employees e
+ON e.`department_id` = d.`department_id`;
+
+
+
+
+
+
+
+
+-- ------------------------------------------------------------------------------------------------------
+/*011
+    满外连接的定义
+	两个表在连接过程中除了返回满足连接条件的行以外还返回 左表和右表表中 中不满足条件的行, 这种连接称为 满外连接。
+	没有匹配的行时, 结果表中相应的列为空(NULL)
+	
+    但是mysql不支持FULL JOIN这个语法
+*/
+# 下面的sql是错的
+SELECT e.employee_id,e.last_name,d.department_name
+FROM departments d FULL JOIN employees e
+ON e.`department_id` = d.`department_id`;
+
+
+
+
+
+
+
+
+
+
 
 
 
