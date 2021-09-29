@@ -55,6 +55,7 @@ WHERE e.`department_id` = d.`department_id`;
 
 /*04
     需求: 选择员工的id, last_name, 工作部门名称, 城市
+    现在需要写AND进行连接
 */
 SELECT e.employee_id,e.last_name,d.department_name,l.city
 FROM employees e,departments d,locations l
@@ -102,8 +103,11 @@ WHERE e.`salary` BETWEEN j.`lowest_sal` AND j.`highest_sal`;
 	在上面的where e.`department_id` = d.`department_id`语句中, 等号两边的表是不一样的, 这个是非自连接
 	反之, 如果两边都是通过一个表, 那么就是自连接
 	
+	但是, 即使是同一个表, 也需要起两个不同的别名, 不然sql的引擎检查不出来. 会报错
+	
 	练习 -> 查询员工的employee_id,last_name及其管理者的employee_id,last_name
 */
+# 需求 -> 查询每个员工工号和姓名 及 该员工管理者的工号和姓名
 SELECT emp.employee_id,emp.last_name,mgr.employee_id mgr_id,mgr.last_name mgr_name
 FROM employees emp,employees mgr
 WHERE emp.`manager_id` = mgr.`employee_id`;	# 这里不能写反了 -> emp.`employee_id` = mgr.`manager_id`
@@ -122,10 +126,12 @@ WHERE emp.`manager_id` = mgr.`employee_id`;	# 这里不能写反了 -> emp.`empl
 	    左外连接	
 		- 两个表在连接过程中除了返回满足连接条件的行以外还返回 左表 中不满足条件的行, 这种连接称为 左外连接。
 		  没有匹配的行时, 结果表中相应的列为空(NULL)
+		  
 		  左外连接 就是, 查询左表中无匹配关系的数据, 就是说, 即使左表中某行数据在右表中没有匹配, 这行数据你也得显示出来. 
 	    左外连接	
 		- 两个表在连接过程中除了返回满足连接条件的行以外还返回 右表 中不满足条件的行, 这种连接称为 右外连接。
 		  没有匹配的行时, 结果表中相应的列为空(NULL)
+		  
 		  右外连接 就是, 查询右表中无匹配关系的数据, 就是说, 即使右表中某行数据在左表中没有匹配, 这行数据你也得显示出来. 
 
 */
@@ -148,11 +154,11 @@ WHERE e.`department_id` = d.`department_id`;
 -- ------------------------------------------------------------------------------------------------------
 /*08
     sql-99语法
-	orcale的实现方式比较简单, 直接在 需要展现数据的一侧添加  (+)  即可. 
+	orcale的实现 左/右 外连接的方式比较简单, 直接在 需要展现数据的一侧添加  (+)  即可. 
 	但是这里需要使用sql-99的语法结构实现
 	先学一下sql-99语法, 然后再使用sql-99实现外连接. 
 */
-# 例子1 -> sql-99语法实现内连接 -> 这和上面的select...from...where是一样的, 还没开始外连接. 
+# 例子1 -> sql-99语法实现内连接 -> 这和上面的select...from...where是一样的(还没开始外连接) 
 SELECT e.employee_id,e.last_name,d.department_name
 FROM employees e INNER JOIN departments d 	# INNER关键词能够省略, 一般我们是省略的, 但是为了和下面形成对比, 而写了出来
 ON e.`department_id` = d.`department_id`;	# 这里的ON就相当于WHERE的作用了. 
@@ -228,25 +234,6 @@ ON e.`department_id` = d.`department_id`;
 SELECT e.employee_id,e.last_name,d.department_name
 FROM departments d FULL JOIN employees e
 ON e.`department_id` = d.`department_id`;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
