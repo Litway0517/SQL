@@ -77,7 +77,7 @@ WHERE e.`department_id` IS NULL;			# 这行是公式的写法, 就是说, 匹配
 	UNION ALL
 		- 取两个子sql语句的查询结果的并集, 但是对sql-1的查询结果和sql-2的查询结果中相同的行 不去重. 
 		
-	sql优化 -> 如果在使用 UNION 和 UNINO ALL 都能达到查询目的情况下, 
+	sql优化 -> 如果在使用 UNION 和 UNION ALL 都能达到查询目的情况下,
 		   尽量使用UNION ALL. 因为没有去重操作, 会节省时间. 
 */
 SELECT e.employee_id,e.last_name,d.department_name
