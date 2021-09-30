@@ -145,17 +145,29 @@ AND l.`city` = 'Toronto';
 		   manager(employees的管理者姓名)字段直接在e表查询
 		   Mgr#(管理者本人的id)字段直接在e表查询
 */
+# sql-1先把manager_id为空的员工查出来看看, 因为后面我要用这个manager_id作为连接字段, 避免有不匹配情况导致结果集缺少数据
+# 果然有一个员工没有manager_id, 这样查询出来的结果就会像sql-2那样少一条数据. 因为这条数据是不匹配的. 
+SELECT e.employee_id,e.last_name,e.manager_id
+FROM employees e
+WHERE e.`manager_id` IS NULL;
+
+# sql-2 -> 这句话可能会缺少数据		106条
 SELECT emp.last_name employees,emp.employee_id "Emp#",mgr.last_name manager,mgr.employee_id "Mgr#"
 FROM employees emp,employees mgr
 WHERE emp.manager_id = mgr.employee_id;
 
+# sql-3 -> 改用外连接查询		107条
+SELECT emp.last_name employees,emp.employee_id "Emp#",mgr.last_name manager,mgr.employee_id "Mgr#"
+FROM employees emp
+LEFT OUTER JOIN employees mgr
+ON emp.manager_id = mgr.employee_id;
 
 
 
 /*
     employees	Emp#	manager	Mgr#
     kochhar		101	king	100
- */
+*/
 
 
 
