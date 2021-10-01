@@ -198,7 +198,7 @@ FROM DUAL;
 */
 SELECT CURDATE(),CURRENT_DATE(),	# 一样的, 记前面那个
 CURTIME(),CURRENT_TIME(),		# 一样的, 记前面的
-SYSDATE()
+NOW(),SYSDATE()				# 两个一样的, 都记下来. 
 FROM DUAL;
 
 # 单独获取当前时间的年 月 日 时 分 秒
@@ -211,10 +211,10 @@ SELECT DATE_ADD(NOW(), INTERVAL 1 YEAR)
 FROM DUAL;		# 增加一年
 
 SELECT DATE_ADD(NOW(), INTERVAL -1 YEAR)
-FROM DUAL;   		#可以是负数
+FROM DUAL;   		# 可以是负数
 
-SELECT DATE_ADD(NOW(), INTERVAL '1_1' YEAR_MONTH)
-FROM DUAL;   	#需要单引号
+SELECT DATE_ADD(NOW(), INTERVAL '1_1' YEAR_MONTH)	# 增加一年一个月
+FROM DUAL;   		# 需要单引号
 
 # 显示转换	实际上也能够隐式转换, 不过要把格式写正确
 # 格式化	日期 -> 字符串
@@ -222,15 +222,10 @@ FROM DUAL;   	#需要单引号
 SELECT DATE_FORMAT(NOW(),'%y--%m--%d %h:%i%s')
 FROM DUAL;
 
-# 解析		字符串 -> 日期
+# 解析		字符串 -> 日期		注意, 后面的格式需要一致. 
 SELECT STR_TO_DATE('21--10--01 12:0204','%y--%m--%d %h:%i%s')
 FROM DUAL;
 
-
-
-/*
-
-*/
 
 
 
@@ -243,6 +238,16 @@ FROM DUAL;
 /*04
     流程控制
 */
+/*
+	
+*/
+
+
+
+
+
+
+
 
 
 
