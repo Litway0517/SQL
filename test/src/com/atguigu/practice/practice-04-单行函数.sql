@@ -62,7 +62,7 @@ FROM employees e;
         king	        AD_PRES	    A
 
  */
-SELECT e.employee_id,e.last_name "Last_name",e.job_id "Job_id",CASE e.job_id 
+SELECT e.employee_id,e.last_name "Last_name",e.job_id "Job_id",CASE e.job_id
 						WHEN 'AD_PRES' THEN 'A'
 						WHEN 'ST_MAN' THEN 'B'
 						WHEN 'IT_PROG' THEN 'C'
