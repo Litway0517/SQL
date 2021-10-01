@@ -239,10 +239,56 @@ FROM DUAL;
     流程控制
 */
 /*
+	IF(value,t ,f) 如果value是真，返回t，否则返回f
 	
+	IFNULL(value1, value2) 如果value1不为空，返回value1，否则返回value2
+
+	CASE WHEN 条件1 THEN result1 WHEN 条件2 THEN result2 ....[ELSE resultn] END 相当于Java的if...else if...else...
+
+	CASE expr WHEN 常量值1 THEN 值1 WHEN 常量值1 THEN 值1.... [ELSE 值n] END 相当于Java的switch...case...
+
 */
+# IF(value,t,f)
+SELECT employee_id,last_name,IF(salary > 1000,'高工资','低工资') "details",
+IF(commission_pct IS NOT NULL,commission_pct,0) "details"
+FROM employees;
+
+# IFBULL(value1, value2) 如果value1不为空，返回value1，否则返回value2
+SELECT employee_id,last_name,IFNULL(commission_pct,0)
+FROM employees;
+
+# CASE WHEN...THEN...WHEN...THEN
+SELECT employee_id,last_name,CASE WHEN salary >= 15000 THEN '高富帅'
+				  WHEN salary >= 10000 THEN '潜力股'
+				  WHEN salary >= 5000 THEN '打工人'
+				  # ELSE语句根据需要可以不写, 但是END必须有 -> 结果查询出来会显示NULL
+				  ELSE '打工仔' END "details"		
+FROM employees;
+
+# CASE...WHEN...THEN...WHEN...THEN
+# 这种情况只是department_id等于某个具体数值的情况, 并不能像上面那样进行判断
+SELECT employee_id,last_name,CASE department_id WHEN 10 THEN '10号部门'
+						WHEN 20 THEN '10号部门'
+						WHEN 30 THEN '10号部门'
+						ELSE '其他部门' END "details"		
+FROM employees;
 
 
+
+/*练习：
+	查询部门号为 10,20, 30 的员工信息, 
+	若部门号为 10, 则打印其工资的 1.1 倍, 
+	20 号部门, 则打印其工资的 1.2倍, 
+	30 号部门打印其工资的 1.3 倍数。
+	
+	这和这个员工的commission_pct没什么关系, 我们的限制条件时部门.
+*/
+SELECT employee_id,last_name,commission_pct,CASE department_id WHEN 10 THEN salary * 1.1
+							       WHEN 20 THEN salary * 1.2
+							       WHEN 30 THEN salary * 1.3
+							       END "details"
+FROM employees
+WHERE department_id IN(10,20,30);
 
 
 
