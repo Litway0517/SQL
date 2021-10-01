@@ -34,12 +34,18 @@ UNION ALL
 SELECT d.location_id
 FROM departments d
 WHERE d.department_id = 90;
+
 # sql-2 -> 这个应该是正确的
 SELECT e.job_id,e.department_id,d.location_id
 FROM employees e,departments d
 WHERE e.`department_id` = d.`department_id` 
 AND d.`department_id` = 90;
 
+# sql-3 -> 尽量直接使用JOIN...ON语句, 不用WHERE语句
+SELECT e.job_id,e.department_id,d.location_id
+FROM employees e JOIN departments d
+ON e.`department_id` = d.`department_id`
+WHERE e.`department_id` = 90;
 
 
 
@@ -85,6 +91,10 @@ JOIN locations l
 ON d.`location_id` = l.`location_id`
 WHERE e.`commission_pct` IS NOT NULL;
 
+/*
+	sql-3上面的sql语句, 如果第二次连接, 即JOIN locations, 连接locations表时, 
+	没有加左外连接, 那么前面链接查询到的结果在这里还是会被扣掉, 就又变成了34条数据
+*/
 # sql-4		35条 -> 正确
 SELECT e.employee_id,e.last_name,d.department_name,d.location_id,l.city
 FROM employees e 
