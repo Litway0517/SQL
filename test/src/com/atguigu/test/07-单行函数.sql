@@ -1,6 +1,7 @@
 /*
     单行函数
 */
+-- ------------------------------------------------------------------------------------------------------------
 /*01
     字符串类型
 */
@@ -142,8 +143,8 @@ MOD(12,5),MOD(12,-5),MOD(-12,5),MOD(-12,-5),
 RAND() * 100
 FROM DUAL;
 
-SELECT ROUND(123.567),ROUND(123.456,0),ROUND(123.567,1)
-ROUND(123.567,-1),ROUND(123.567,-2)		# -1是看小数点的左面一位, 仍然按照'四舍五入'规则, 小于等于4则置0, 大于4进10
+SELECT ROUND(123.567),ROUND(123.456,0),ROUND(123.567,1),
+ROUND(123.56,-1),ROUND(123.567,-2)		# -1是看小数点的左面一位, 仍然按照'四舍五入'规则, 小于等于4则置0, 大于4进10
 FROM DUAL;
 
 # 截断函数TRUNCATE(x,y)	不管小数点后面的数字是多少, 均舍掉
@@ -166,10 +167,72 @@ FROM DUAL;
 
 
 -- ------------------------------------------------------------------------------------------------------------
-
 /*03
     日期类型
 */
+/*
+	CURDATE() 或 CURRENT_DATE() 返回当前日期
+	CURTIME() 或 CURRENT_TIME() 返回当前时间
+	
+	NOW() / SYSDATE() / CURRENT_TIMESTAMP() / LOCALTIME() /	LOCALTIMESTAMP() 返回当前系统日期时间
+	
+	YEAR(date) / MONTH(date) / DAY(date) / HOUR(time) /	MINUTE(time) / SECOND(time) 返回具体的时间值
+	
+	WEEK(date) / WEEKOFYEAR(date) 返回一年中的第几周
+	
+	DAYOFWEEK(date) 返回周几，注意：周日是1，周一是2，。。。周六是7
+	
+	WEEKDAY(date) 返回周几，注意，周1是0，周2是1，。。。周日是6
+	
+	DAYNAME(date) 返回星期：MONDAY,TUESDAY.....SUNDAY
+	
+	MONTHNAME(date) 返回月份：January，。。。。。
+	
+	DATEDIFF(date1,date2) / TIMEDIFF(time1, time2) 返回date1 - date2的日期间隔 / 返回time1 - time2的时间间隔
+	
+	DATE_ADD(datetime, INTERVAL expr type) 返回与给定日期时间相差INTERVAL时间段的日期时间
+	
+	DATE_FORMAT(datetime ,fmt) 按照字符串fmt格式化日期datetime值
+	
+	STR_TO_DATE(str, fmt) 按照字符串fmt对str进行解析，解析为一个日期
+*/
+SELECT CURDATE(),CURRENT_DATE(),	# 一样的, 记前面那个
+CURTIME(),CURRENT_TIME(),		# 一样的, 记前面的
+SYSDATE()
+FROM DUAL;
+
+# 单独获取当前时间的年 月 日 时 分 秒
+SELECT YEAR(CURRENT_DATE()),MONTH(CURDATE()),DAY(CURDATE()),
+HOUR(CURTIME()),MINUTE(CURTIME()),SECOND(CURTIME())
+FROM DUAL;
+
+
+SELECT DATE_ADD(NOW(), INTERVAL 1 YEAR)
+FROM DUAL;		# 增加一年
+
+SELECT DATE_ADD(NOW(), INTERVAL -1 YEAR)
+FROM DUAL;   		#可以是负数
+
+SELECT DATE_ADD(NOW(), INTERVAL '1_1' YEAR_MONTH)
+FROM DUAL;   	#需要单引号
+
+# 显示转换	实际上也能够隐式转换, 不过要把格式写正确
+# 格式化	日期 -> 字符串
+# DATE_FORMAT(datetime ,fmt) 按照字符串fmt格式化日期datetime值	具体的格式见sql-文档
+SELECT DATE_FORMAT(NOW(),'%y--%m--%d %h:%i%s')
+FROM DUAL;
+
+# 解析		字符串 -> 日期
+SELECT STR_TO_DATE('21--10--01 12:0204','%y--%m--%d %h:%i%s')
+FROM DUAL;
+
+
+
+/*
+
+*/
+
+
 
 
 
