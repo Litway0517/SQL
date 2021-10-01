@@ -300,12 +300,23 @@ WHERE department_id IN(10,20,30);
 
 
 -- ------------------------------------------------------------------------------------------------------------
-
 /*05
     其他函数
 */
+/*
+	database() 返回当前数据库名
+	version() 返回当前数据库版本
+	user() 返回当前登录用户名
+	password(str) 返回字符串str的加密版本，41位长的字符串
+	md5(str) 返回字符串str的md5值，也是一种加密方式
+*/
+SELECT DATABASE(),VERSION(),USER()
+FROM DUAL;
 
-
+# 当前端将数据发送到后台时, 一般就需要加密, MD5
+SELECT PASSWORD('abcd'),
+MD5('abcd'),MD5(MD5('abcd'))
+FROM DUAL;
 
 
 
