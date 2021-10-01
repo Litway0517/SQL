@@ -116,16 +116,6 @@ FROM DUAL;
 
 
 
-/*
-	
-*/
-
-
-
-
-
-
-
 
 
 
@@ -135,6 +125,41 @@ FROM DUAL;
 /*02
     数值类型
 */
+/*
+	ABS(x) 返回x的绝对值
+	CEIL(x) 返回大于x的最小整数值
+	FLOOR(x) 返回小于x的最大整数值
+	MOD(x,y) 返回x/y的模
+		MOD函数最终的结果, 和被模数有关, 即与x有关, x正则正,x负则负
+	RAND() 返回0~1的随机值
+	ROUND(x,y) 返回参数x的四舍五入的有y位的小数的值
+	TRUNCATE(x,y) 返回数字x截断为y位小数的结果
+	SQRT(x) 返回x的平方根
+	POW(x,y) 返回x的y次方
+*/
+SELECT ABS(-100),CEIL(23.001),FLOOR(123.999),
+MOD(12,5),MOD(12,-5),MOD(-12,5),MOD(-12,-5),
+RAND() * 100
+FROM DUAL;
+
+SELECT ROUND(123.567),ROUND(123.456,0),ROUND(123.567,1)
+ROUND(123.567,-1),ROUND(123.567,-2)		# -1是看小数点的左面一位, 仍然按照'四舍五入'规则, 小于等于4则置0, 大于4进10
+FROM DUAL;
+
+# 截断函数TRUNCATE(x,y)	不管小数点后面的数字是多少, 均舍掉
+SELECT TRUNCATE(123.567,0),TRUNCATE(123.567,1),TRUNCATE(123.998,-1)
+FROM DUAL;
+
+# ROUND()和RAND()匹配 -> 生成0-100之间的随机数, 然后保留三位小数
+SELECT ROUND(RAND()*100,3)
+FROM DUAL;
+
+# SQRT(x)平方根  1/2次方
+SELECT SQRT(3)
+FROM DUAL;
+
+
+
 
 
 
