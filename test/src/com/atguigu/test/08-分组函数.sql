@@ -113,6 +113,61 @@ FROM employees;
 
 
 
+/*
+	having
+	查询部门最高工资比10000高的部门 及其 最高工资
+*/
+# sql-1 -> 这个语句查询的是每个部门的最高工资, 但是我们需要限制大于10000以上的!
+SELECT e.department_id,MAX(e.salary)
+FROM employees e
+GROUP BY e.department_id;
+
+# sql-2 -> 这个sql是错误的, 因为where的过滤条件中出现了组函数, 之前我们从来没这样用过. 这里就需要换成having了
+SELECT e.department_id,MAX(e.salary)
+FROM employees e
+WHERE MAX(e.salary) > 10000
+GROUP BY e.department_id;
+
+# sql-3 -> 这个还是不正确, 需要把having语句放在group by后面. 但是这样写在Oracle中是正确的
+SELECT e.department_id,MAX(e.salary)
+FROM employees e
+HAVING MAX(e.salary) > 10000
+GROUP BY e.department_id;
+
+# sql-4 -> 这个是正确的
+SELECT e.department_id,MAX(e.salary)
+FROM employees e
+GROUP BY e.department_id
+HAVING MAX(e.salary) > 10000;
+/*
+	最后的结果就是, 20号部门中的最高工资是13000, 是大于10000的. 
+	同样地, 30号部门中某个员工的最高工资是11000, 也是大于10000的. 
+*/
+
+
+
+/*
+	需求 -> 查询10, 20, 30, 40号部门中, 部门中员工的最高工资比10000高的部门 及其 最高工资
+*/
+# sql-1 -> 写法一 !!!更推荐这种写法
+SELECT e.department_id,MAX(e.salary)
+FROM employees e
+WHERE e.department_id IN (10,20,30,40)
+GROUP BY e.department_id
+HAVING MAX(salary) > 10000;
+
+# sql-2 -> 写法二
+SELECT e.department_id,MAX(e.salary)
+FROM employees e
+GROUP BY e.department_id
+HAVING MAX(salary) > 10000 
+AND e.department_id IN(10,20,30,40);
+/*
+    更推荐写法一. 因为效率高
+    结论 ->
+	如果需要写的过滤条件1中, 出现了组函数, 那么就把 条件1 放在having中
+	如果需要的第二个过滤条件2, 没有出现组函数, 比如上面的 "指明了部门为10, 20, 30, 40"这个条件, 就放在where中. 
+*/
 
 
 
