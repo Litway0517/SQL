@@ -105,7 +105,8 @@ SELECT department_id,AVG(salary)
 FROM employees;
 
 /*
-	结论 -> select 中出现了组函数和非组函数字段, 那么非组函数的字段一定要声明在group by中. 
+	结论 -> 比较重要
+		select 中出现了组函数和非组函数字段, 那么非组函数的字段一定要声明在group by中. 
 		换句话说 -> 出现在select中的非组函数字段一定要出现在group by中. 
 		反之, 声明在group by中的字段可以不声明在select中. 
 */
