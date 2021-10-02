@@ -97,7 +97,7 @@ GROUP BY e.job_id,e.department_id;
 
 -- --------------------------------------------------------------------------------------------------------
 # 下面的语句是正确的, 符合我们的逻辑需求
-SELECT e.deparment_id,AVG(e.salary)
+SELECT e.department_id,AVG(e.salary)
 FROM employees e;
 
 # 下面的语句是错误的, 在Oracle中直接不能运行
