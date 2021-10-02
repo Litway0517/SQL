@@ -5,14 +5,14 @@
 /*
 	上篇：avg() / sum() / max() / min() / count()
 */
-# 1 -> avg() / sum() , 一般只适用于数值类型, 其他是没有意义的. 
+# 1 -> avg() / sum() , 一般只适用于数值类型, 其他是没有意义的, 但是结果会显示0. 
 SELECT AVG(salary),SUM(salary),AVG(last_name),SUM(last_name)
 FROM employees;
 
 
 # 2 -> min() / max() , 适用于数值类型, 日期类型, 字符串类型
 SELECT MIN(salary),MAX(salary),MIN(employee_id),MIN(last_name),
-MIN(hire_date),MAX(hire_date)
+MIN(hire_date),MAX(hire_date)			# 最早入职和最晚入职的日期
 FROM employees;
 
 
@@ -23,12 +23,13 @@ FROM employees;
 
 
 # 需求 -> 统计员工表中的员工个数
-# 推荐使用count(*), 使用其他字段必须确保该字段不为null
+# 推荐使用count(*), 若使用其他字段必须确保该字段不为null, 才能得到正确结果
+# 尽量使用前面的字段, 这样速度会更快一些. 
 SELECT COUNT(employee_id),COUNT(last_name),COUNT(1),COUNT(2),COUNT(*)
 FROM employees;
 
 
-# count 与 avg, sum三者之间的关系  avg = sum / count
+# count 与 avg, sum三者之间的关系  avg = sum / count. 平均= 求总和 / 该字段的计数
 SELECT AVG(salary),SUM(salary)/COUNT(salary)
 FROM employees;
 
@@ -51,11 +52,12 @@ FROM employees;
 
 
 
-
 -- --------------------------------------------------------------------------------------------------
 /*
 	下篇: group by / having
 */
+
+
 
 
 
