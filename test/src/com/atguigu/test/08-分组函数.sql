@@ -56,11 +56,59 @@ FROM employees;
 /*
 	下篇: group by / having
 */
+/*
+	查询公司所有员工的平均工资
+*/
+SELECT AVG(e.salary)
+FROM employees e;
+
+/*
+	查询各个部门的平均工资
+	这里需要分组
+*/
+# sql-1 -> 这个看不出来对应的部门的具体平均工资, 说白了就是结果中没有部门号这个字段
+SELECT TRUNCATE(AVG(e.salary),0) "avg_salary"
+FROM employees e
+GROUP BY e.department_id;
+
+# sql-2
+SELECT e.department_id,TRUNCATE(AVG(e.salary),0) "avg_salary"
+FROM employees e
+GROUP BY e.department_id;
+
+# sql-3 -> 按照工种计算平均工资
+SELECT e.job_id,AVG(e.salary)
+FROM employees e
+GROUP BY job_id;
+
+# sql-4 -> 计算同一部门中且同一工种中的员工平均工资. 这里需要根据多列分组
+/*
+	这里面, 按照逻辑, 会先按照department_id分组, 然后再按照department_id中的job_id分组. 最后再在分好的组内求avg(salary)
+*/
+SELECT e.department_id,e.job_id,AVG(e.salary)
+FROM employees e
+GROUP BY e.department_id,e.job_id;
+
+# sql-5 -> 与sql-4结果是一样的
+SELECT e.job_id,e.department_id,TRUNCATE(AVG(e.salary),0)
+FROM employees e
+GROUP BY e.job_id,e.department_id;
 
 
+-- --------------------------------------------------------------------------------------------------------
+# 下面的语句是正确的, 符合我们的逻辑需求
+SELECT e.deparment_id,AVG(e.salary)
+FROM employees e;
 
+# 下面的语句是错误的, 在Oracle中直接不能运行
+SELECT department_id,AVG(salary)
+FROM employees;
 
-
+/*
+	结论 -> select 中出现了组函数和非组函数字段, 那么非组函数的字段一定要声明在group by中. 
+		换句话说 -> 出现在select中的非组函数字段一定要出现在group by中. 
+		反之, 声明在group by中的字段可以不声明在select中. 
+*/
 
 
 
