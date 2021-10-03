@@ -1,10 +1,27 @@
 #1.查询和Zlotkey相同部门的员工姓名和工资
 
+SELECT e.employee_id,e.last_name,e.salary
+FROM employees e
+WHERE e.`department_id` = (
+			SELECT e.department_id
+			FROM employees e
+			WHERE last_name = 'Zlotkey'
+			);
+
 
 
 
 
 #2.查询工资比公司平均工资高的员工的员工号，姓名和工资。
+
+SELECT e.employee_id,e.last_name,e.salary
+FROM employees e
+WHERE e.`salary` > (
+		SELECT AVG(e.salary)
+		FROM employees e
+		);
+
+
 
 
 
@@ -17,6 +34,23 @@
 
 
 #4.查询和姓名中包含字母u的员工在相同部门的员工的员工号和姓名
+SELECT e.employee_id,e.last_name,e.department_id
+FROM employees e
+WHERE e.last_name IN (
+			SELECT last_name
+			FROM employees e
+			WHERE last_name LIKE '%u%'
+			/*
+			    这个子查询, 查出来的是, 名字中包含u的员工
+			*/
+			)
+GROUP BY department_id;
+
+
+
+
+
+
 
 
 
