@@ -41,9 +41,12 @@ WHERE e.salary > (
 	子查询的分类 : 单行子查询, 多行子查询
 */
 
+
+
+-- -------------------------------------------------------------------------------------------------------------
 /*
     1 -> 单行子查询
-	可以使用的符号:  =  >  >=  <  <=  <>  !=	
+	可以使用的 比较符号 :  =  >  >=  <  <=  <>  !=	
 */
 /*
     下面主要是练习 -> 主要的知识和前面的查询结构差不多, 到了后面还有一点新知识
@@ -147,6 +150,55 @@ Subquery returns more than 1 row
 */
 
 			
+
+
+
+-- -------------------------------------------------------------------------------------------------------------
+/*
+    2 -> 多行子查询
+    
+    多行子查询能够使用的 比较操作符 : IN ALL ANY
+    
+*/
+# in
+SELECT employee_id,last_name,department_id
+FROM employees
+WHERE salary IN (
+		SELECT MIN(salary)
+		FROM employees
+		GROUP BY department_id
+		);
+
+
+/*
+    练习4 -> 返回其它job_id中比job_id为‘IT_PROG’部门任一工资低的员工的员工号、姓名、job_id 以及salary
+    
+    只要小于IT_PROG中的任意一个员工的工资就可以, 小于4200叫做小于, 小于9000也是满足条件的. 
+    这就是ANY
+*/
+SELECT employee_id,last_name,job_id,salary
+FROM employees
+WHERE job_id <> 'IT_PROG'
+AND salary < ANY(
+		SELECT salary
+		FROM employees
+		WHERE job_id = 'IT_PROG'
+		);
+
+
+/*
+    练习5 -> 返回其它job_id中比job_id为‘IT_PROG’部门所有工资都低的员工的员工号、姓名、job_id以及salary
+    比job_id为 IT_PROG 的所有员工的工资都要低 的其他job_id的员工的工号, 姓名, job_id, salary
+*/
+SELECT employee_id,last_name,job_id,salary
+FROM employees
+WHERE job_id <> 'IT_PROG'
+AND salary < ALL(
+		SELECT salary
+		FROM employees
+		WHERE job_id = 'IT_PROG'
+		);
+
 
 
 
