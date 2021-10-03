@@ -171,6 +171,34 @@ AND e.department_id IN(10,20,30,40);
 
 
 
+/*
+# 查询语句的结构1 -> 
+
+SELECT 字段1,字段2,...,(其他表)字段K
+FROM 表1 别名1,表2 别名2,...
+WHERE 多表的连接条件 AND 非组函数的过滤条件		# 多个条件用AND或者OR, 还有BETWEEN...AND, NOT等
+GROUP BY ...,...
+HAVING 组函数的过滤条件
+ORDER BY ... ASC/DESC,... ASC/DESC
+LIMIT ...,...;
+
+
+
+# 查询语句的结构2 -> 
+
+SELECT 字段1,字段2,...,(其他表)字段K
+FROM 表1 别名1 (LEFT OUTER / RIGHT OUTER) JOIN 表2 别名2 ON 连接条件...
+(LEFT OUTER / RIGHT OUTER) JOIN 表3 别名3 ON 连接条件
+WHERE 非组函数的过滤条件
+GROUP BY ...,...
+HAVING 组函数的过滤条件
+ORDER BY ... ASC/DESC,... ASC/DESC
+LIMIT ...,...;
+
+
+*/
+
+
 
 
 
