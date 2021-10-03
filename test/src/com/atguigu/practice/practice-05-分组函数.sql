@@ -22,8 +22,10 @@ GROUP BY job_id;
 
 
 
-#4.选择具有各个job_id的员工人数
-
+#4.选择各个job_id的员工人数(题目表达的不太准确, 意思是说, job_id被分为很多类, 每一类下面有多少员工)
+SELECT job_id,COUNT(*)
+FROM employees
+GROUP BY job_id;
 
 
 
@@ -32,7 +34,7 @@ GROUP BY job_id;
 
 
 # 5.查询员工最高工资和最低工资的差距（DIFFERENCE）
-SELECT MAX(salary) - MIN(salary) "DIFFERENCE"
+SELECT MAX(salary),MIN(salary),MAX(salary) - MIN(salary) "DIFFERENCE"
 FROM employees;
 
 
@@ -69,6 +71,7 @@ SELECT department_name
 FROM departments
 WHERE ISNULL(`manager_id`);
 
+# 注意这里面是所有部门的相关信息, 所以即使有些部门没有员工也需要列出来后面需要查询的字段, 尽量写成左外连接
 SELECT d.department_name "d_name",d.department_id "d_id",d.location_id,COUNT(e.employee_id) "emp_num",TRUNCATE(AVG(e.salary),2) "avg_salary"
 FROM departments d LEFT JOIN employees e
 ON d.`department_id` = e.`department_id`
