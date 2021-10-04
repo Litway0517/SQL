@@ -37,6 +37,56 @@ DROP DATABASE database0517;
 /*
     4. 创建表
 */
+# 方式一
+CREATE TABLE emp1(
+id INT,
+last_name VARCHAR(15),
+email VARCHAR(25),
+salary DOUBLE(10,2),
+hire_date DATE
+);
+
+DESC emp1;
+
+
+# 方式二 -> 基于现有的表建表(结构是一致的, 而且这个表内会有数据)
+CREATE TABLE emp2
+AS
+SELECT employee_id,last_name
+FROM employees;
+
+DESC emp2;
+DESC employees;
+
+
+# 方式三 -> select 中对列取别名, 会作为新建表的列名
+CREATE TABLE emp3
+AS 
+SELECT employee_id emp_id,last_name,salary sal 
+FROM employees;
+
+# 查询失败
+SELECT employee_id
+FROM emp3;
+
+
+# 练习1 -> 复制employees表，包含所有数据
+CREATE TABLE employees_copy 
+AS 
+SELECT *
+FROM employees;
+
+SELECT *
+FROM employees_copy;
+
+# 练习2 -> 复制employees表，不包含所有数据
+CREATE TABLE employees_copy_blank 
+AS 
+SELECT *
+FROM employees 
+# WHERE department_id = 10000;		# 随便用一个条件, 让select查不到数据即可
+WHERE 1 = 2;
+
 
 
 
@@ -44,6 +94,11 @@ DROP DATABASE database0517;
 /*
     5. 修改表
 */
+
+
+
+
+
 
 
 
@@ -56,7 +111,7 @@ DROP DATABASE database0517;
 /*
     7. 删除表
 */
-
+DROP TABLE employees_copy;
 
 
 /*
