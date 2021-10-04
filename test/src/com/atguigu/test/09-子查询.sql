@@ -232,7 +232,12 @@ WHERE e1.salary > (
 /*
     除了group by和limit 这两个位置一般不写子查询, 其实其他地方也能写, 比如下面的from后面
     用department_id和avg_salary两个字段构成一个表, 然后from这个表. 就是从这个结果集中查询. 
+	构造出来一张表, 这张表包括 [department_id(部门id字段), avg_sal该部门平均工资]
+	这张表是求各个部门的平均工资, 所以需要对部门id这个字段分组 group by department_id
+    
+    
     还有一些字段问题, 需要注意, 字段需要重命名. 
+	比如: 内查询的 AVG(salary) avg_sal 重命名为avg_sal, 是因为后面会用到这个字段, 如果直接写AVG(salary)可能不会被识别.
 */
 SELECT e.employee_id,e.last_name,e.salary
 FROM employees e,(
@@ -244,6 +249,19 @@ WHERE e.`department_id` = dept_avg_sal.department_id
 AND e.`salary` > dept_avg_sal.avg_sal;
 
 
+
+
+/*
+     练习7 -> 查询员工的employee_id，last_name，要求按照department_name从小到大排序
+     体验一下将子查询写在ORDER BY中
+*/
+SELECT employee_id,last_name
+FROM employees e
+ORDER BY (
+	   SELECT department_name
+	   FROM departments d
+	   WHERE e.`department_id` = d.`department_id`
+	) DESC;
 
 
 
