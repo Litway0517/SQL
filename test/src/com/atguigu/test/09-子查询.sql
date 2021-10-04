@@ -270,13 +270,45 @@ ORDER BY (
 
 
 
+-- -------------------------------------------------------------------------------------------------------------
+/*
+    EXISTS关键字
+    练习8 -> 查询公司管理者的employee_id,last_name,job_id,department_id信息
+*/
+# sql-1 -> 方式一
+SELECT e.employee_id,e.last_name,e.job_id,e.department_id
+FROM employees e
+WHERE employee_id IN (
+			SELECT DISTINCT e.manager_id
+			FROM employees e
+		     );
 
 
+# sql-2 -> 方式二 用exists
+SELECT e.employee_id,e.last_name,e.job_id,e.department_id
+FROM employees e
+WHERE EXISTS (
+		SELECT 'X'
+		FROM employees e2
+		WHERE e.`employee_id` = e2.`manager_id`
+	      );
 
 
-
-
-
+/*
+    sql-2语句的分析 ->
+	带有子查询的sql语句的总体执行顺序是:
+		S1. 主查询送一条数据进入子查询
+		S2. 子查询判断完该数据会返回给主查询
+		S3. 主查询利用该返回的数据继续做判断, 是不是该保留S1中送入的数据 
+		
+		
+	sql-2的执行顺序	
+	外查询是employees表的所有数据, 一行一行的送进内查询. 
+	第一条数据送进内查询, 那么第一行 外查询的表的employee_id字段 和 内查询的表的manager_id字段做等值比较.
+		如果相等, 返回TRUE. exists判断为真, 则保留该条数据为结果集中的一条数据.
+			此时对于外表的这行送入的数据来说, 就已经完成任务了, 即一旦匹配成功就会返回. 不会再向下比较. 
+		如果不相等, 返回FALSE. 该条数据不是要查询的数据, 转入下一条数据. 
+*/
 
 
 
