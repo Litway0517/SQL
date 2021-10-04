@@ -290,6 +290,10 @@ WHERE department_id = (
 
 
 
+
+
+
+
 #10.查询平均工资最高的 job 信息
 
 SELECT *
