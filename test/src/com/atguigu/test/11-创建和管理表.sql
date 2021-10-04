@@ -30,7 +30,7 @@ SHOW TABLES;
 /*
     3. 删除库
 */
-
+DROP DATABASE database0517;
 
 
 
