@@ -192,7 +192,7 @@ AND salary < ANY(
 */
 SELECT employee_id,last_name,job_id,salary
 FROM employees
-WHERE job_id <> 'IT_PROG'
+WHERE job_id <> 'IT_PROG'			# 扣除job_id为'IT_PROG'这个工种
 AND salary < ALL(
 		SELECT salary
 		FROM employees
@@ -202,6 +202,46 @@ AND salary < ALL(
 
 
 
+
+
+-- -------------------------------------------------------------------------------------------------------------
+/*
+    练习6(有相关性) -> 查询员工中工资大于本部门平均工资的员工的last_name,salary和其department_id
+*/
+# 先看另一个练习(没有相关性) -> 查询员工中工资大于本公司平均工资的员工的last_name,salary和其department_id
+SELECT e.employee_id,e.last_name,e.salary
+FROM employees e
+WHERE e.salary > (
+		  SELECT AVG(salary)
+		  FROM employees 
+		);
+
+
+# sql-2 -> 相关子查询写法1
+SELECT e1.employee_id,e1.last_name,e1.salary
+FROM employees e1
+WHERE e1.salary > (
+		  SELECT AVG(salary)
+		  FROM employees e2
+		  WHERE e2.`department_id` = e1.`department_id`
+		);
+
+
+
+# sql-3 -> 相关子查询写法2
+/*
+    除了group by和limit 这两个位置一般不写子查询, 其实其他地方也能写, 比如下面的from后面
+    用department_id和avg_salary两个字段构成一个表, 然后from这个表. 就是从这个结果集中查询. 
+    还有一些字段问题, 需要注意, 字段需要重命名. 
+*/
+SELECT e.employee_id,e.last_name,e.salary
+FROM employees e,(
+		    SELECT department_id,AVG(salary) avg_sal
+		    FROM employees
+		    GROUP BY department_id
+		) dept_avg_sal
+WHERE e.`department_id` = dept_avg_sal.department_id
+AND e.`salary` > dept_avg_sal.avg_sal;
 
 
 
