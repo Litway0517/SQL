@@ -5,9 +5,7 @@ WHERE e.`department_id` = (
 			    SELECT e.department_id
 			    FROM employees e
 			    WHERE last_name = 'Zlotkey'
-			    );
-
-
+			   );
 
 
 
@@ -18,7 +16,7 @@ FROM employees e
 WHERE e.`salary` > (
 		    SELECT AVG(e.salary)
 		    FROM employees e
-		    );
+		   );
 
 
 
@@ -44,10 +42,10 @@ WHERE e.`salary` > (
 SELECT e.employee_id,e.last_name,e.department_id
 FROM employees e
 WHERE e.last_name IN (
-			SELECT last_name
-			FROM employees e
-			WHERE last_name LIKE '%u%'
-			)
+		       SELECT last_name
+		       FROM employees e
+		       WHERE last_name LIKE '%u%'
+		      )
 GROUP BY department_id;
 
 
@@ -75,9 +73,9 @@ WHERE e.department_id = ANY(
 SELECT e.employee_id,e.last_name,e.department_id
 FROM employees e
 WHERE department_id IN (
-			SELECT department_id 
-			FROM departments d
-			WHERE d.`location_id` = 1700
+			 SELECT department_id 
+			 FROM departments d
+			 WHERE d.`location_id` = 1700
 			);
 
 
@@ -93,14 +91,20 @@ WHERE department_id IN (
     分析 ->
 	先把King的工号查出来, 再按照e表的结构, manager_id确定员工的管理者. 
 */
+# sql-1 -> 自写(子查询方式)		14条
 SELECT e.employee_id,e.last_name,e.salary
 FROM employees e
 WHERE e.`manager_id` IN (
 			  SELECT employee_id
 			  FROM employees e
 			  WHERE last_name = 'King'
-			);
+			 );
 
+# sql-2 -> 视频(自连接方式)		14条
+SELECT emp.employee_id,emp.last_name,emp.salary
+FROM employees emp JOIN employees mgr
+ON emp.`manager_id` = mgr.`employee_id`
+WHERE mgr.`last_name` = 'King';
 
 
 
@@ -110,7 +114,12 @@ WHERE e.`manager_id` IN (
 
 
 #7.查询工资最低的员工信息: last_name, salary
-
+SELECT e.employee_id,e.last_name,e.salary
+FROM employees e
+WHERE salary IN (
+		  SELECT MIN(e.salary)
+		  FROM employees e
+		 );
 
 
 
@@ -118,6 +127,43 @@ WHERE e.`manager_id` IN (
 
 
 #8.查询平均工资最低的部门信息
+/*
+    分析 -> 
+	这题看似简单, 其实非常难. 需要一步一步查. 
+
+    sql-1是自写. 
+    
+    sql-2和其他几条是答案参考.
+
+*/
+
+# sql-1
+SELECT *
+FROM departments d
+JOIN
+(
+SELECT department_id
+FROM (
+	SELECT e1.department_id,AVG(e1.salary) "e1_avg_sal"
+	FROM employees e1
+	GROUP BY e1.department_id
+      ) dept_avg_sal_1 
+JOIN 
+     (
+	SELECT MIN(e2_avg_sal) "e2_avg_sal"
+	FROM (
+		SELECT AVG(e2.salary) "e2_avg_sal"
+		FROM employees e2
+		GROUP BY e2.department_id
+	      ) dept_avg_sal_2
+      ) min_sal_end
+ON dept_avg_sal_1.e1_avg_sal = min_sal_end.e2_avg_sal
+) min_sal_dept_id
+ON d.`department_id` = min_sal_dept_id.department_id;
+
+
+
+
 
 
 
@@ -132,6 +178,20 @@ WHERE e.`manager_id` IN (
 
 
 #10.查询平均工资最高的 job 信息
+
+SELECT *
+FROM jobs
+
+
+SELECT job_id,MAX(avg_sal)
+FROM (
+	SELECT job_id,AVG(salary) "avg_sal"
+	FROM employees
+	GROUP BY department_id
+      ) dept_avg_sal
+
+
+
 
 
 
