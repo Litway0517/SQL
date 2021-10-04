@@ -100,12 +100,22 @@ WHERE e.`manager_id` IN (
 			  WHERE last_name = 'King'
 			 );
 
+
 # sql-2 -> 视频(自连接方式)		14条
 SELECT emp.employee_id,emp.last_name,emp.salary
 FROM employees emp JOIN employees mgr
 ON emp.`manager_id` = mgr.`employee_id`
 WHERE mgr.`last_name` = 'King';
 
+
+# sql-3 -> 连接条件还能改一下
+SELECT e.employee_id,e.last_name,e.salary
+FROM employees e
+WHERE e.`manager_id` = ANY(
+			    SELECT employee_id
+			    FROM employees e
+			    WHERE last_name = 'King'
+			   );
 
 
 
@@ -137,7 +147,7 @@ WHERE salary IN (
 
 */
 
-# sql-1
+# sql-1 -> 自写. 关键是确定 部门id 的时候, 写的太乱了. 没想到having
 SELECT *
 FROM departments d
 JOIN
@@ -163,6 +173,77 @@ ON d.`department_id` = min_sal_dept_id.department_id;
 
 
 
+# sql-2 -> 视频写法
+SELECT *
+FROM departments
+WHERE department_id = (
+			SELECT e.department_id
+			FROM employees e
+			GROUP BY department_id
+			HAVING AVG(salary) = (
+						SELECT MIN(e2_avg_sal) "e2_avg_sal"
+						FROM (
+							SELECT AVG(e2.salary) "e2_avg_sal"
+							FROM employees e2
+							GROUP BY e2.department_id
+						      ) dept_avg_sal
+			)
+);
+
+
+# sql-3 -> 视频写法
+SELECT *
+FROM departments
+WHERE department_id = (
+			SELECT e.department_id
+			FROM employees e
+			GROUP BY department_id
+			HAVING AVG(salary) <= ALL(		# 小于等于ALL -> 意味着下雨等于查出来的结果的最小的值
+						  SELECT AVG(e2.salary) "e2_avg_sal"
+						  FROM employees e2
+						  GROUP BY e2.department_id
+						  )
+			);
+
+
+# sql-4 -> 视频写法
+SELECT *
+FROM departments
+WHERE department_id = (
+			SELECT e.department_id
+			FROM employees e
+			GROUP BY department_id
+			HAVING AVG(salary) = (
+						SELECT AVG(e2.salary) "e2_avg_sal"
+						FROM employees e2
+						GROUP BY e2.department_id
+						ORDER BY `e2_avg_sal`
+						LIMIT 0,1
+						)
+			);
+
+
+# sql-5 -> 视频写法
+# 这里是一个小细节, 如果不表明d表. 那么会多出来内查询的两个字段e.department_id,AVG(e.salary) avg_sal
+SELECT d.*
+FROM departments d
+JOIN
+	(
+	   SELECT e.department_id,AVG(e.salary) avg_sal
+	   FROM employees e
+	   GROUP BY department_id
+	   ORDER BY `avg_sal`
+	   LIMIT 0,1
+	) dept_min_avg_Sal
+ON d.`department_id` = dept_min_avg_sal.department_id;
+
+			
+
+
+
+
+
+
 
 
 
@@ -171,8 +252,40 @@ ON d.`department_id` = min_sal_dept_id.department_id;
 
 
 #9.查询平均工资最低的部门信息和该部门的平均工资（难）
+/*
+     分析 ->
+	对于第8题来说, 仅仅差了一个平均工资
+*/
+# sql-1 -> 这样来写是最简单的, 但是避开了一个知识点! 
+SELECT d.*,dept_min_avg_sal.avg_sal
+FROM departments d
+JOIN
+	(
+	   SELECT e.department_id,AVG(e.salary) avg_sal
+	   FROM employees e
+	   GROUP BY department_id
+	   ORDER BY `avg_sal`
+	   LIMIT 0,1
+	) dept_min_avg_Sal
+ON d.`department_id` = dept_min_avg_sal.department_id;
 
 
+# sql-2 -> 
+SELECT d.*,(SELECT AVG(salary) FROM employees WHERE department_id = d.`department_id`) "avg_sal"
+FROM departments d
+WHERE department_id = (
+			SELECT e.department_id
+			FROM employees e
+			GROUP BY department_id
+			HAVING AVG(salary) = (
+						SELECT MIN(e2_avg_sal) "e2_avg_sal"
+						FROM (
+							SELECT AVG(e2.salary) "e2_avg_sal"
+							FROM employees e2
+							GROUP BY e2.department_id
+						      ) dept_avg_sal
+			)
+);
 
 
 
