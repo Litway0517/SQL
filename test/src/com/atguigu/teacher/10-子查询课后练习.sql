@@ -48,7 +48,7 @@ WHERE department_id = (
 
 						)
 						
-			)			
+			);
 
 #方式二：
 SELECT *
@@ -63,7 +63,7 @@ WHERE department_id = (
 						GROUP BY department_id
 						 ) 
 		
-			)
+			);
 
 #方式三：
 
@@ -80,7 +80,7 @@ WHERE department_id = (
 						ORDER BY avg_sal
 						LIMIT 0,1			
 						)
-		       )
+		       );
 
 #方式四：
 SELECT d.*
