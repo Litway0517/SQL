@@ -214,7 +214,7 @@ FROM myemp;
 
 /*
     结论 ->
-	一TRUNCATE TABLE为代表的DDL操作, 都会在执行了语句之后, 自动执行COMMIT提交数据. 
+	一TRUNCATE TABLE为代表的DDL操作(诸如, ALTER, DROP, CHANGE, RENAME, TRUNCATE), 都会在执行了语句之后, 自动执行COMMIT提交数据. 
 	而且此行为提交不受SET autocommit = FALSE;语句限制. 所以, ROLLBACK行为对DDL操作都失效.
 	DDL -> Database Definition Languages.
 	
