@@ -63,7 +63,6 @@ WHERE e.department_id = ANY(
 
 
 
-
 #5.查询在部门的location_id为1700的部门工作的员工的员工号
 /*
     分析 ->
@@ -77,8 +76,6 @@ WHERE department_id IN (
 			 FROM departments d
 			 WHERE d.`location_id` = 1700
 			);
-
-
 
 
 
@@ -116,8 +113,6 @@ WHERE e.`manager_id` = ANY(
 			    FROM employees e
 			    WHERE last_name = 'King'
 			   );
-
-
 
 
 
@@ -198,7 +193,7 @@ WHERE department_id = (
 			SELECT e.department_id
 			FROM employees e
 			GROUP BY department_id
-			HAVING AVG(salary) <= ALL(		# 小于等于ALL -> 意味着下雨等于查出来的结果的最小的值
+			HAVING AVG(salary) <= ALL(		# 小于等于ALL -> 意味着小于等于查出来的结果中的最小的值
 						  SELECT AVG(e2.salary) "e2_avg_sal"
 						  FROM employees e2
 						  GROUP BY e2.department_id
@@ -223,7 +218,7 @@ WHERE department_id = (
 			);
 
 
-# sql-5 -> 视频写法
+# sql-5 -> 视频写法. 造出来一张表, 这张表由 department_id 和 avg_sal 两个字段组成.
 # 这里是一个小细节, 如果不表明d表. 那么会多出来内查询的两个字段e.department_id,AVG(e.salary) avg_sal
 SELECT d.*
 FROM departments d
@@ -238,11 +233,6 @@ JOIN
 ON d.`department_id` = dept_min_avg_sal.department_id;
 
 			
-
-
-
-
-
 
 
 
@@ -270,7 +260,7 @@ JOIN
 ON d.`department_id` = dept_min_avg_sal.department_id;
 
 
-# sql-2 -> 
+# sql-2 -> 把子查询写在select语句中
 SELECT d.*,(SELECT AVG(salary) FROM employees WHERE department_id = d.`department_id`) "avg_sal"
 FROM departments d
 WHERE department_id = (
@@ -293,33 +283,97 @@ WHERE department_id = (
 
 
 
-
 #10.查询平均工资最高的 job 信息
-
-SELECT *
-FROM jobs
-
-
-SELECT job_id,MAX(avg_sal)
-FROM (
-	SELECT job_id,AVG(salary) "avg_sal"
-	FROM employees
-	GROUP BY department_id
-      ) dept_avg_sal
-
-
-
+# sql-1 -> 自写. 根据前面的几个经验, 这个sql相对来说好写一些. 使用造表法. 
+SELECT j.*
+FROM jobs j
+JOIN
+	(
+	  SELECT job_id,AVG(salary) "avg_sal"
+	  FROM employees
+	  GROUP BY job_id
+	  ORDER BY avg_sal DESC
+	  LIMIT 0,1
+	) job_max_avg_sal
+ON j.`job_id` = job_max_avg_sal.job_id;
 
 
+# sql-2 -> 不使用造表法, 多嵌套试试
+SELECT j.*
+FROM jobs j
+WHERE j.job_id = (
+		    SELECT e.job_id
+		    FROM employees e
+		    GROUP BY job_id
+		    HAVING AVG(salary) >= ALL(
+						SELECT AVG(e.salary) "avg_sal"
+						FROM employees e
+						GROUP BY e.job_id
+						ORDER BY `avg_sal` DESC
+					      )
+		  );
 
 
 
-#11.查询平均工资高于公司平均工资的部门有哪些?
+
+
+
+
+
+#11.查询 平均工资  高于  公司平均工资的部门有哪些?
+# sql-1 -> 实际上还能用其他语句查询, 比如直接造表法, 那样可能更快
+SELECT d.*
+FROM departments d
+WHERE department_id IN (
+			SELECT e.department_id
+			FROM employees e
+			GROUP BY e.department_id
+			HAVING AVG(e.salary) > (
+						  SELECT AVG(avg_e.salary)
+						  FROM employees avg_e
+						)
+			);
+
+
+# sql-2 -> 造表法. 
+/*
+    实际上这里造表法发挥的作用不太大, 因为部门的平均工资只能在e表查, 而部门的信息只能在d表查, 还是不能直接凑成一张表.
+*/
+SELECT d.*
+FROM departments d
+JOIN 
+      (
+        SELECT department_id "id"
+        FROM employees e
+        GROUP BY department_id
+        HAVING AVG(salary) > (
+			       SELECT AVG(avg_e.salary)
+			       FROM employees avg_e
+			      )
+      ) dept_id
+ON d.`department_id` = dept_id.id;
+
+
+
+
 
 
 
 
 #12.查询出公司中所有 manager 的详细信息.
+/*
+    分析 -> 针对 EXISTS 关键字, 有必要再复习一下. 
+	这个使用的是 EXISTS 语句
+*/
+SELECT e.*
+FROM employees e
+WHERE EXISTS (
+	       SELECT 'X'
+	       FROM employees e2
+	       WHERE e.employee_id = e2.`manager_id`
+);
+
+
 
 
 
@@ -331,7 +385,58 @@ FROM (
 
 
 
+
+
 #14.查询平均工资最高的部门的 manager 的详细信息: last_name, department_id, email, salary
+# sql-1 -> 不是构表法, 就是嵌套一层一层查. 
+SELECT e.last_name,e.department_id,e.email,e.salary
+FROM employees e
+WHERE e.employee_id = (
+			SELECT d.manager_id
+			FROM departments d
+			WHERE d.`department_id` = (
+						    SELECT department_id
+						    FROM employees
+						    GROUP BY department_id
+						    HAVING AVG(salary) >= ALL(
+									       SELECT AVG(e.salary) "avg_sal"
+									       FROM employees e
+									       GROUP BY e.department_id
+									      )
+
+						    )
+			);
+
+
+# sql-2 -> 尝试使用构表法
+SELECT e.last_name,e.department_id,e.email,e.salary
+FROM employees e
+WHERE e.`employee_id` = (
+			  SELECT d.manager_id
+			  FROM departments d
+			  JOIN (
+			         SELECT department_id "dept_id",AVG(e.salary) "avg_sal"
+			         FROM employees e
+			         GROUP BY e.`department_id`
+			         ORDER BY `avg_sal` DESC
+			         LIMIT 0,1
+			        ) dept_max_avg_sal
+			  ON d.`department_id` = dept_max_avg_sal.dept_id
+
+			  );
+
+
+
+
+
+
+	
+
+
+
+
+
+
 
 
 
