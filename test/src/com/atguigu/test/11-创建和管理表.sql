@@ -129,6 +129,9 @@ CHANGE last_name lname VARCHAR(30);
 /*
     6. 重命名表
 */
+RENAME TABLE emp3 TO myemp3;
+
+
 
 
 
