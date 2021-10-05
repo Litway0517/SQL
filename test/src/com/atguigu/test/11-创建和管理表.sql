@@ -94,11 +94,35 @@ WHERE 1 = 2;
 /*
     5. 修改表
 */
+DESC emp3;
+
+
+# 5.1 -> 增加一个列
+ALTER TABLE emp3
+ADD email VARCHAR(25);
+
+SELECT *
+FROM emp3;
+
+# 5.2 -> 删除一个列
+ALTER TABLE emp3
+DROP email;
+
+ALTER TABLE emp3
+DROP COLUMN email;
+
+
+# 5.3 -> 修改字段(类型, 储值范围). 一般来说不会更改字段类型. 但是也可以 -> MODIFY last_name char(50)
+DESC emp3;
+
+ALTER TABLE emp3
+MODIFY last_name VARCHAR(30);
 
 
 
-
-
+# 5.4 -> 重命名字段
+ALTER TABLE emp3
+CHANGE last_name lname VARCHAR(30);
 
 
 
