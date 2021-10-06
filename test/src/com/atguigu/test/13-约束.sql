@@ -126,7 +126,8 @@ SELECT * FROM emp4;
 /*
     在修改表的时候, 如果删除约束? 
 
-    1. 在创建唯一约束的时候, 如果不给唯一约束起别名, 那么就默认和列原来的名字相同.
+    1. 在创建唯一约束的时候, 如果不给唯一约束起别名, 那么就默认和列原来的名字相同. 
+    
     2. MySQL会给唯一约束的列上默认创建一个唯一索引
     
     
@@ -160,6 +161,100 @@ ADD CONSTRAINT emp4_id_uk UNIQUE(id);
 
 
 DESC emp4;
+
+
+
+# 查看某张表中已经存在的约束
+SELECT * FROM information_schema.`TABLE_CONSTRAINTS`
+WHERE table_name = 'employees';
+
+
+
+
+-- ----------------------------------------------------------------------------------------------------------
+/*03
+    PRIMARY KEY -> 主键约束
+	- 一个表中只能有一个主键约束. 
+	- 主键约束, 既满足唯一性, 也满足非空性. 
+	- 通过声明有主键约束的字段, 可以确定表中的唯一的一条记录. 
+	- 通常, 在创建表的同时, 需要指明一个主键约束. 
+*/
+CREATE TABLE emp5(
+	id INT PRIMARY KEY,		# 列级约束
+	last_name VARCHAR(15),
+	email VARCHAR(25),
+	hire_date DATE,
+	salary DOUBLE(10,2)
+);
+
+
+DESC emp5;
+
+SELECT *
+FROM emp5;
+
+# 添加数据 成功
+INSERT INTO emp5(id,salary,last_name,email)
+VALUES(1,3795,'Tom','tom@126.com');
+
+# 添加数据 失败 -> 主键不能重复		Duplicate entry '1' for key 'PRIMARY'
+INSERT INTO emp5(id,salary,last_name,email)
+VALUES(1,3795,'Tom','tom@126.com');
+
+# 添加数据 失败 -> 主键不能为空		Column 'id' cannot be null
+INSERT INTO emp5(id,salary,last_name,email)
+VALUES(NULL,3795,'Tom','tom@126.com');
+
+DROP TABLE emp6;
+
+CREATE TABLE emp6(
+	id INT AUTO_INCREMENT,
+	last_name VARCHAR(15),
+	email VARCHAR(25),
+	hire_date DATE,
+	salary DOUBLE(10,2),
+	CONSTRAINT emp6_id_pk PRIMARY KEY(id)
+);
+
+
+
+# 插入数据
+INSERT INTO emp6(last_name,salary,email,hire_date)
+VALUES('Tom',11363,'tom@163.com',CURDATE());
+
+SELECT * FROM emp6;
+
+
+
+# 删除表的主键. 如果这个主键值是自增长的, 下面的sql会出错, 所以我们删除emp5表的主键. 
+# 但是, 这个sql仅仅是删除主键标识. 而主键标识会带来两个作用, 非空和唯一. 删除的时候 实际上非空约束还是存在的. 
+ALTER TABLE emp5
+DROP PRIMARY KEY;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
