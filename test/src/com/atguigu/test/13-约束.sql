@@ -231,6 +231,7 @@ SELECT * FROM emp6;
 ALTER TABLE emp5
 DROP PRIMARY KEY;
 
+DESC emp5;
 
 
 
@@ -241,20 +242,74 @@ DROP PRIMARY KEY;
 
 
 
+-- ----------------------------------------------------------------------------------------------------------
+/*04
+    FOREIGN KEY -> 外键约束
+	作用: 在表A的字段a上声明一个外键约束, 与表B的字段b相关联. 则字段a在insert等操作时, 
+		其赋的值一定是字段b中出现过的数据. 
+	
+	要求: 对于B表的b字段也有要求, b字段在B表中的声明, 要是主键约束或者唯一性约束. 
+*/
 
 
+CREATE TABLE dept7(
+	dept_id INT,
+	dept_name VARCHAR(10)
+);
 
 
+# 错误 -> Cannot add foreign key constraint(因为dept7这个表dept_id字段没有主键约束也没有唯一性约束)
+CREATE TABLE emp7(
+	id INT,
+	last_name VARCHAR(15),
+	dept_id INT,
+	# 添加表级约束, 外键
+	CONSTRAINT emp7_dept_id_fk FOREIGN KEY(dept_id) REFERENCES dept7(dept_id)
+);
 
 
+# 添加dept7表的主键
+ALTER TABLE dept7
+ADD CONSTRAINT dept7_dept_id_pk PRIMARY KEY(dept_id);
+
+DESC dept7;
 
 
+# 修改之后成功
+CREATE TABLE emp7(
+	id INT,
+	last_name VARCHAR(15),
+	dept_id INT,
+	# 添加表级约束, 外键
+	CONSTRAINT emp7_dept_id_fk FOREIGN KEY(dept_id) REFERENCES dept7(dept_id)
+);
 
 
+# 当dept7表为空的时候, 向emp7表中添加数据会出错的. 因为dept7表的外键约束
+INSERT INTO emp7(id,last_name,dept_id)
+VALUES(1,'Tom',10);
 
 
+# 先对dept7表添加数据
+INSERT INTO dept7(dept_id,dept_name)
+VALUES(10,'IT');
 
 
+# 插入成功
+INSERT INTO emp7(id,last_name,dept_id)
+VALUES(1,'Tom',10);
+
+
+/*
+    结论 ->
+	在实际开发中, 不建议在创建表的时候使用外键约束. 
+	因为这样在插入数据的时候, 会去检查其他表中是否存在这个值. 呆滞插入速度下降. 
+	但是这个需求需要完成, 一般我们会在Java代码中维护一个表格, 日前检查. 下面是例子:
+	
+	比如 -> 
+	    需要对e表插入一条员工信息A, A的部门是50, 那么就必须保证50号部门是真实存在的, 不然会出现错误. 
+	    而, 具体有哪些部门, 这些信息我们可以维护在Java代码中. 
+*/
 
 
 
