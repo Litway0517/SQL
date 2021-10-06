@@ -28,8 +28,41 @@
 
 
 
+/*01
+    NOT NULL -> 非空约束
+*/
+# 在创建表的同时, 添加约束
+CREATE TABLE emp3(
+	id INT NOT NULL,
+	last_name VARCHAR(15) NOT NULL,
+	email VARCHAR(25),
+	hire_date DATE
+);
 
 
+DESC emp3;
+
+# 添加成功
+INSERT INTO emp3(id,last_name,email,hire_date)
+VALUES(1,'Tom','tom@126.com',CURDATE());
+
+SELECT * FROM emp3;
+
+# 添加失败
+INSERT INTO emp3(id,last_name,email,hire_date)
+VALUES(2,NULL,'jury@163.com',CURDATE());
+
+
+
+# 在 ALTER TABLE时, 删除表的非空约束
+ALTER TABLE emp3
+MODIFY last_name VARCHAR(15) NULL;	# 最后加上一个null, 意思是在插入数据的时候, 允许这个字段的值为null. 
+
+
+/*
+    如果想通过, ALTER TABLE ... MODIFY ... 修改某个字段为 非空约束 时, 但是这张表的该字段已经有了null, 那么是不行的. 
+    比如, 如果表中的last_name字段本身有null值出现了, 那么再修改该字段为not null是不行的. 
+*/
 
 
 
