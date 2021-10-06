@@ -318,7 +318,7 @@ VALUES(1,'Tom',10);
 
 -- ----------------------------------------------------------------------------------------------------------
 /*05
-    检查约束(check)
+    CHECK -> 检查约束
 	对mysql失效
 */
 CREATE TABLE emp8(
@@ -335,6 +335,48 @@ INSERT INTO emp8(id,last_name,salary)
 VALUES(2,'Jury',2685);
 
 SELECT * FROM emp8;
+
+
+
+
+
+-- ----------------------------------------------------------------------------------------------------------
+/*06
+    DEFAULT -> 默认值约束
+	对mysql失效
+*/
+CREATE TABLE emp9(
+	id INT,
+	last_name VARCHAR(15),
+	salary DOUBLE(10,2) DEFAULT 2579
+);
+
+
+# 添加字段
+ALTER TABLE emp9
+ADD last_name VARCHAR(15);
+
+DESC emp9;
+
+INSERT INTO emp9(id,last_name)
+VALUES(1,'Tom');
+
+
+SELECT * FROM emp9;
+
+
+INSERT INTO emp9(id,last_name,salary)
+VALUES(1,'Tom',5003);
+
+
+
+
+
+
+
+
+
+
 
 
 
