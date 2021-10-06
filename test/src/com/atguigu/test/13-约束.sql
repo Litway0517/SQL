@@ -314,3 +314,27 @@ VALUES(1,'Tom',10);
 
 
 
+
+
+-- ----------------------------------------------------------------------------------------------------------
+/*05
+    检查约束(check)
+	对mysql失效
+*/
+CREATE TABLE emp8(
+	id INT,
+	last_name VARCHAR(15),
+	salary DOUBLE(10,2) CHECK(salary > 3000)
+);
+
+# 添加数据
+INSERT INTO emp8(id,last_name,salary)
+VALUES(1,'Tom',4555);
+
+INSERT INTO emp8(id,last_name,salary)
+VALUES(2,'Jury',2685);
+
+SELECT * FROM emp8;
+
+
+
